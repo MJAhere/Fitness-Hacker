@@ -1,33 +1,29 @@
-const mongoose = require('mongoose');
+//npm dep
 const express = require("express");
 const logger = require("morgan");
-const dotenv = require('dotenv')
-const dotenv = require("dotenv")
+const mongoose = require("mongoose");
 
-const PORT = process.env.PORT || 8080;
-
+//express
+const PORT = process.env.PORT || 3000;
 const app = express();
 
+//express middleware
 app.use(logger("dev"));
-
-
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
-
-// 
 app.use(express.static("public"));
 
-// connection to mongoDB 
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-}).
+//mongoDB 
+mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/workout", { 
+    useNewUrlParser: true 
+    , useFindAndModify: false
+});
 
+//routes
+app.use(require("./routes/api-routes"));
+app.use(require("./routes/view"));
 
-    app.use(require("./routes/view.js"));
-app.use(require("./routes/api.js"));
-
-// Server Listen
+//server 
 app.listen(PORT, () => {
     console.log(`App running on port ${PORT}!`);
 });
